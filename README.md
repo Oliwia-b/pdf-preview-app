@@ -54,3 +54,11 @@ npm run dev
 - technologies used
 - info that there is no backend
 - features: responsive design, drag & drop, highlight that the loading bar is simulated, just for UI improvement
+
+8. When navigating the document, viewport is moving to the top of the website which each change of the page, what requires user to scroll to the document view each time. When going back to the pages that were already viewed, the problem doesn't occur. Make the displayed file a default viewport position (proposed solution not used)
+
+9. Reserve space for the PDF content so that navigation doesn’t trigger layout shifts (which cause scroll jumps).
+    
+10. add zoom in/ zoom out functionality on the document
+    
+11. Disable zoom buttons after they reach max zoom in or out or set a limits on a scale variable to prevent users from clicking too many times one button after the max zoom was already reached and then having to click the same number of times second button to undo changes
