@@ -18,7 +18,7 @@ A lightweight React app for uploading and previewing PDF files directly in the b
 - **Responsive design** — mobile and desktop friendly
 - **Drag & drop** support for easy file uploads
 - **PDF navigation** with page controls
-- **Simulated loading progress bar** (based on file size only — for UX, not actual loading time)
+- **Simulated loading progress bar**
 - **Graceful error handling** for unsupported or unreadable files
 
 ## 📦 Installation
