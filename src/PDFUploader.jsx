@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "./styles/PdfUploader.css";
 
@@ -15,6 +15,11 @@ export default function PdfUploader() {
   const [dragActive, setDragActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [scale, setScale] = useState(1); // default zoom level
+  const [pageHeight, setPageHeight] = useState(800); // default fallback height
+
+  const minScale = 0.5;
+  const maxScale = 1.25;
 
   const handleFile = (uploadedFile) => {
     if (uploadedFile && uploadedFile.type === "application/pdf") {
@@ -73,9 +78,34 @@ export default function PdfUploader() {
     setPageNumber(1);
   };
 
-  const goToPrevPage = () => setPageNumber((prev) => Math.max(prev - 1, 1));
-  const goToNextPage = () =>
-    setPageNumber((prev) => Math.min(prev + 1, numPages));
+  const goToPrevPage = () => {
+    setPageNumber((prev) => {
+      const newPage = Math.max(prev - 1, 1);
+      return newPage;
+    });
+  };
+
+  const goToNextPage = () => {
+    setPageNumber((prev) => {
+      const newPage = Math.min(prev + 1, numPages);
+      return newPage;
+    });
+  };
+
+  const zoomIn = () => {
+    setScale((prev) => Math.min(prev + 0.25, maxScale));
+  };
+
+  const zoomOut = () => {
+    setScale((prev) => Math.max(prev - 0.25, minScale));
+  };
+
+  const resetZoom = () => setScale(1);
+
+  const handleRenderSuccess = (page) => {
+    const viewport = page.getViewport({ scale });
+    setPageHeight(viewport.height);
+  };
 
   return (
     <div className="pdf-uploader">
@@ -124,8 +154,19 @@ export default function PdfUploader() {
               Next ▶
             </button>
           </div>
+          <div className="zoom-controls">
+            <button onClick={zoomOut} disabled={scale <= minScale}>
+              ➖ Zoom Out
+            </button>
+            <button onClick={resetZoom} disabled={scale === 1.5}>
+              🔄 Reset
+            </button>
+            <button onClick={zoomIn} disabled={scale >= maxScale}>
+              ➕ Zoom In
+            </button>
+          </div>
 
-          <div className="pdf-preview">
+          <div className="pdf-preview" style={{ minHeight: `${pageHeight}px` }}>
             <Document
               file={file}
               onLoadSuccess={onDocumentLoadSuccess}
@@ -135,6 +176,8 @@ export default function PdfUploader() {
                 pageNumber={pageNumber}
                 renderTextLayer={false}
                 renderAnnotationLayer={false}
+                scale={scale}
+                onRenderSuccess={handleRenderSuccess}
               />
             </Document>
           </div>
